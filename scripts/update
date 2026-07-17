@@ -70,6 +70,20 @@ write_source() {
   mv "$temporary" "$target"
 }
 
+update_apple_emoji() {
+  local release tag asset_name asset url hash
+
+  echo "Updating Apple Color Emoji metadata..."
+  release="$(github_get "https://api.github.com/repos/samuelngs/apple-emoji-ttf/releases/latest")"
+  tag="$(jq --raw-output --exit-status '.tag_name' <<<"$release")"
+  asset_name="AppleColorEmoji-Linux.ttf"
+  asset="$(release_asset "$release" "$asset_name")"
+  url="$(jq --raw-output --exit-status '.browser_download_url' <<<"$asset")"
+  hash="$(flat_hash "$asset")"
+
+  write_source packages/apple-emoji-ttf/source.json "$tag" "$url" "$hash"
+}
+
 update_naiveproxy() {
   local release tag version asset_name asset url hash
 
@@ -119,6 +133,7 @@ update_rime_schema() {
 }
 
 update_all() {
+  update_apple_emoji
   update_naiveproxy
   update_ariang
   update_rime_gram
@@ -134,6 +149,9 @@ for target in "$@"; do
     all)
       update_all
       ;;
+    apple-emoji)
+      update_apple_emoji
+      ;;
     naiveproxy)
       update_naiveproxy
       ;;
@@ -148,7 +166,7 @@ for target in "$@"; do
       ;;
     *)
       echo "unknown target: $target" >&2
-      echo "expected one of: all, naiveproxy, ariang, rime-gram, rime-schema" >&2
+      echo "expected one of: all, apple-emoji, naiveproxy, ariang, rime-gram, rime-schema" >&2
       exit 2
       ;;
   esac

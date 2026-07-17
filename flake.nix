@@ -28,6 +28,7 @@
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
       overlay = final: _prev: {
+        apple-emoji-ttf = final.callPackage ./packages/apple-emoji-ttf { };
         naiveproxy-bin = final.callPackage ./packages/naiveproxy-bin { };
         ariang = final.callPackage ./packages/ariang { };
         rime-wanxiang-schema = final.callPackage ./packages/rime-wanxiang-schema {
@@ -44,11 +45,13 @@
         let
           pkgs = import nixpkgs {
             inherit system;
+            config.allowUnfreePredicate = package: (package.pname or "") == "apple-emoji-ttf";
             overlays = [ overlay ];
           };
         in
         {
           inherit (pkgs)
+            apple-emoji-ttf
             ariang
             naiveproxy-bin
             rime-wanxiang-gram
