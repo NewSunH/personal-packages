@@ -26,6 +26,10 @@ jobs:
         with:
           ref: ${{ github.event.repository.default_branch }}
       - uses: DeterminateSystems/determinate-nix-action@v3
+      - uses: cachix/cachix-action@v17
+        with:
+          name: newsunh
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - name: Update package metadata
         env:
@@ -44,8 +48,8 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build updated packages
-        if: steps.changes.outputs.changed == 'true'
+      - name: Build packages
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           nix build --no-link \
             .#naiveproxy-bin \

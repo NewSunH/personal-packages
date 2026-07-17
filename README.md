@@ -14,22 +14,27 @@ Blender is intentionally out of scope because it is maintained separately.
 ## Use as a flake input
 
 ```nix
-inputs.personal-packages = {
-  url = "github:NewSunH/personal-packages";
-  inputs.nixpkgs.follows = "nixpkgs";
-};
+inputs.personal-packages.url = "github:NewSunH/personal-packages";
 ```
 
-Install the overlay in a NixOS or Home Manager module:
+Consume the package outputs directly to retain this flake's locked `nixpkgs`
+revision and maximize binary-cache hits:
 
 ```nix
-{
-  nixpkgs.overlays = [ inputs.personal-packages.overlays.default ];
-}
+inputs.personal-packages.packages.x86_64-linux.naiveproxy-bin
+inputs.personal-packages.packages.x86_64-linux.ariang
+inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-schema
+inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-gram
 ```
 
-The packages are then available as `pkgs.naiveproxy-bin`, `pkgs.ariang`,
-`pkgs.rime-wanxiang-schema`, and `pkgs.rime-wanxiang-gram`.
+The default overlay remains available for consumers that intentionally want to
+build the packages against their own `nixpkgs` revision.
+
+## Binary cache
+
+Build outputs are published to `https://newsunh.cachix.org`. The flake advertises
+the substituter and its public key through `nixConfig`; the same settings should
+be added to the root NixOS flake when this repository is consumed as an input.
 
 ## Update sources
 
@@ -46,4 +51,6 @@ Or update selected sources:
 ```
 
 The scheduled GitHub workflow checks weekly. When it finds a change, it validates
-the flake, builds all packages, and opens an update pull request.
+the flake, builds and caches all packages, and opens an update pull request. A
+manual workflow run always rebuilds the package set, which can be used to refill
+the cache.

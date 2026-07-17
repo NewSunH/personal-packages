@@ -1,6 +1,13 @@
 {
   description = "Personal Nix packages used by NewSunH's NixOS configurations";
 
+  nixConfig = {
+    extra-substituters = [ "https://newsunh.cachix.org" ];
+    extra-trusted-public-keys = [
+      "newsunh.cachix.org-1:voaLAjHu01ASoWbhCgCFDMvr6fPVF//Hw0hRa6jaoRM="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
