@@ -1,0 +1,44 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1784120854,
+        "narHash": "sha256-KesHgItiZPgGX740axSiQLcIQ8D24MDqNpkKYWIek8k=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "753cc8a3a87467296ddd1fa93f0cc3e81120ee46",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "rime-wanxiang-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784249546,
+        "narHash": "sha256-A6xTQmyc8zVA6UQVyo7OnSJpC16BEYOdMUiPa/lYx2I=",
+        "owner": "amzxyz",
+        "repo": "rime-wanxiang",
+        "rev": "11c2f5ef6a43e6285aa71c93f210c74aeb8c0ae3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "amzxyz",
+        "repo": "rime-wanxiang",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "rime-wanxiang-src": "rime-wanxiang-src"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
