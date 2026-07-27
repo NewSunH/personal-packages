@@ -70,6 +70,22 @@ write_source() {
   mv "$temporary" "$target"
 }
 
+write_git_source() {
+  local target="$1"
+  local version="$2"
+  local rev="$3"
+  local hash="$4"
+  local temporary
+
+  temporary="$(mktemp "${target}.XXXXXX")"
+  jq --null-input \
+    --arg version "$version" \
+    --arg rev "$rev" \
+    --arg hash "$hash" \
+    '{ version: $version, rev: $rev, hash: $hash }' >"$temporary"
+  mv "$temporary" "$target"
+}
+
 update_apple_emoji() {
   local release tag asset_name asset url hash
 
@@ -114,6 +130,31 @@ update_ariang() {
   write_source packages/ariang/source.json "$version" "$url" "$hash"
 }
 
+update_uosc_danmaku() {
+  local commit rev date main_file upstream_version version url hash
+
+  echo "Updating uosc-danmaku metadata..."
+  commit="$(github_get "https://api.github.com/repos/Tony15246/uosc_danmaku/commits/main")"
+  rev="$(jq --raw-output --exit-status '.sha' <<<"$commit")"
+  date="$(jq --raw-output --exit-status '.commit.committer.date[0:10]' <<<"$commit")"
+  main_file="$(github_get "https://api.github.com/repos/Tony15246/uosc_danmaku/contents/main.lua?ref=${rev}")"
+  upstream_version="$(
+    jq --raw-output --exit-status '.content | gsub("\\n"; "") | @base64d' <<<"$main_file" \
+      | sed -n 's/^VERSION = "\(.*\)"/\1/p' \
+      | head -n 1
+  )"
+  if [[ -z "$upstream_version" ]]; then
+    echo "unable to determine uosc-danmaku version" >&2
+    exit 1
+  fi
+
+  version="${upstream_version}-unstable-${date}"
+  url="https://github.com/Tony15246/uosc_danmaku/archive/${rev}.tar.gz"
+  hash="$(unpacked_hash "$url")"
+
+  write_git_source packages/uosc-danmaku/source.json "$version" "$rev" "$hash"
+}
+
 update_rime_gram() {
   local release asset_name asset url hash
 
@@ -136,6 +177,7 @@ update_all() {
   update_apple_emoji
   update_naiveproxy
   update_ariang
+  update_uosc_danmaku
   update_rime_gram
   update_rime_schema
 }
@@ -158,6 +200,9 @@ for target in "$@"; do
     ariang)
       update_ariang
       ;;
+    uosc-danmaku)
+      update_uosc_danmaku
+      ;;
     rime-gram)
       update_rime_gram
       ;;
@@ -166,7 +211,7 @@ for target in "$@"; do
       ;;
     *)
       echo "unknown target: $target" >&2
-      echo "expected one of: all, apple-emoji, naiveproxy, ariang, rime-gram, rime-schema" >&2
+      echo "expected one of: all, apple-emoji, naiveproxy, ariang, uosc-danmaku, rime-gram, rime-schema" >&2
       exit 2
       ;;
   esac

@@ -16,5 +16,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: DeterminateSystems/determinate-nix-action@v3
       - run: nix flake check --show-trace
+      - name: Build uosc-danmaku and verify its required modules
+        run: nix build --no-link .#uosc-danmaku
       - name: Build Apple Color Emoji without a public binary cache
         run: nix build --no-link .#apple-emoji-ttf

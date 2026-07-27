@@ -7,6 +7,7 @@ Personal Nix packages shared by the NewSunH NixOS configurations.
 - `apple-emoji-ttf`: Apple Color Emoji Linux TTF from upstream releases
 - `naiveproxy-bin`: upstream x86_64 Linux release binary
 - `ariang`: AriaNg web interface with a desktop launcher
+- `uosc-danmaku`: mpv DanDanPlay danmaku extension with uosc integration
 - `rime-wanxiang-schema`: Wanxiang Rime schema and dictionaries
 - `rime-wanxiang-gram`: Wanxiang LMDG LTS language model
 
@@ -24,6 +25,7 @@ revision and maximize binary-cache hits:
 ```nix
 inputs.personal-packages.packages.x86_64-linux.naiveproxy-bin
 inputs.personal-packages.packages.x86_64-linux.ariang
+inputs.personal-packages.packages.x86_64-linux.uosc-danmaku
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-schema
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-gram
 inputs.personal-packages.packages.x86_64-linux.apple-emoji-ttf
@@ -54,7 +56,7 @@ Run every updater:
 Or update selected sources:
 
 ```console
-./scripts/update apple-emoji naiveproxy ariang rime-gram rime-schema
+./scripts/update apple-emoji naiveproxy ariang uosc-danmaku rime-gram rime-schema
 ```
 
 The scheduled GitHub workflow checks weekly. When it finds a change, it validates

@@ -59,6 +59,7 @@ jobs:
           nix build --no-link \
             .#naiveproxy-bin \
             .#ariang \
+            .#uosc-danmaku \
             .#rime-wanxiang-schema \
             .#rime-wanxiang-gram
 

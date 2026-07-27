@@ -31,6 +31,7 @@
         apple-emoji-ttf = final.callPackage ./packages/apple-emoji-ttf { };
         naiveproxy-bin = final.callPackage ./packages/naiveproxy-bin { };
         ariang = final.callPackage ./packages/ariang { };
+        uosc-danmaku = final.callPackage ./packages/uosc-danmaku { };
         rime-wanxiang-schema = final.callPackage ./packages/rime-wanxiang-schema {
           inherit rime-wanxiang-src;
         };
@@ -56,6 +57,7 @@
             naiveproxy-bin
             rime-wanxiang-gram
             rime-wanxiang-schema
+            uosc-danmaku
             ;
 
           default = pkgs.naiveproxy-bin;
