@@ -3,8 +3,8 @@ name: Update packages
 on:
   workflow_dispatch:
   schedule:
-    # 每天 03:23 UTC 跑一次，紧跟上游版本（Hyprland 插件 ABI 锁版本，宜高频）。
-    - cron: "23 3 * * *"
+    # 每天 00:00 UTC 跑一次，紧跟上游版本（Hyprland 插件 ABI 锁版本，宜高频）。
+    - cron: "0 0 * * *"
 
 permissions:
   contents: write
