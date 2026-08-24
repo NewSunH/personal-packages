@@ -36,6 +36,7 @@
           inherit rime-wanxiang-src;
         };
         rime-wanxiang-gram = final.callPackage ./packages/rime-wanxiang-gram { };
+        hyprexpo = final.callPackage ./packages/hyprexpo { };
       };
     in
     {
@@ -54,6 +55,7 @@
           inherit (pkgs)
             apple-emoji-ttf
             ariang
+            hyprexpo
             naiveproxy-bin
             rime-wanxiang-gram
             rime-wanxiang-schema
