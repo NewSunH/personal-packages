@@ -63,3 +63,5 @@ The scheduled GitHub workflow checks weekly. When it finds a change, it validate
 the flake, builds and caches all packages, and opens an update pull request. A
 manual workflow run always rebuilds the package set, which can be used to refill
 the cache.
+
+<!-- verify: automerge + required check -->
