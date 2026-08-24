@@ -5,15 +5,18 @@
   meson,
   ninja,
 }:
+
+let
+  source = builtins.fromJSON (builtins.readFile ./source.json);
+in
 hyprlandPlugins.mkHyprlandPlugin {
   pluginName = "hyprexpo";
-  version = "0.56.1+3";
+  inherit (source) version;
 
   src = fetchFromGitHub {
     owner = "sandwichfarm";
     repo = "hyprexpo";
-    rev = "v0.56.1+3";
-    hash = "sha256-lI52XGlHMAXhn8ztpRkzefFy5ZnTIsQgAlTEVYTXseA=";
+    inherit (source) rev hash;
   };
 
   nativeBuildInputs = [

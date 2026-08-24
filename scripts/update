@@ -173,10 +173,25 @@ update_rime_schema() {
   nix flake update rime-wanxiang-src
 }
 
+update_hyprexpo() {
+  local release tag version rev url hash
+
+  echo "Updating hyprexpo metadata..."
+  release="$(github_get "https://api.github.com/repos/sandwichfarm/hyprexpo/releases/latest")"
+  tag="$(jq --raw-output --exit-status '.tag_name' <<<"$release")"
+  version="${tag#v}"
+  rev="$tag"
+  url="https://github.com/sandwichfarm/hyprexpo/archive/${rev}.tar.gz"
+  hash="$(unpacked_hash "$url")"
+
+  write_git_source packages/hyprexpo/source.json "$version" "$rev" "$hash"
+}
+
 update_all() {
   update_apple_emoji
   update_naiveproxy
   update_ariang
+  update_hyprexpo
   update_uosc_danmaku
   update_rime_gram
   update_rime_schema
@@ -200,6 +215,9 @@ for target in "$@"; do
     ariang)
       update_ariang
       ;;
+    hyprexpo)
+      update_hyprexpo
+      ;;
     uosc-danmaku)
       update_uosc_danmaku
       ;;
@@ -211,7 +229,7 @@ for target in "$@"; do
       ;;
     *)
       echo "unknown target: $target" >&2
-      echo "expected one of: all, apple-emoji, naiveproxy, ariang, uosc-danmaku, rime-gram, rime-schema" >&2
+      echo "expected one of: all, apple-emoji, naiveproxy, ariang, hyprexpo, uosc-danmaku, rime-gram, rime-schema" >&2
       exit 2
       ;;
   esac
