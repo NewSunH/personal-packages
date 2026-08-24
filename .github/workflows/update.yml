@@ -26,6 +26,9 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.repository.default_branch }}
+          # 用 PAT（而非默认 GITHUB_TOKEN）做 push，这样 push/pull_request 事件
+          # 才会真正触发 `check` workflow（GITHUB_TOKEN 会触发 GitHub 的防递归）。
+          token: ${{ secrets.GH_PAT }}
       - uses: DeterminateSystems/determinate-nix-action@v3
 
       - name: Update package metadata
@@ -77,7 +80,7 @@ jobs:
       - name: Open update pull request
         if: steps.changes.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           if ! gh pr view "$UPDATE_BRANCH" >/dev/null 2>&1; then
             gh pr create \
@@ -90,6 +93,6 @@ jobs:
       - name: Enable auto-merge
         if: steps.changes.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           gh pr merge "$UPDATE_BRANCH" --auto --squash --delete-branch
