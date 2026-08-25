@@ -37,6 +37,7 @@
         };
         rime-wanxiang-gram = final.callPackage ./packages/rime-wanxiang-gram { };
         hyprexpo = final.callPackage ./packages/hyprexpo { };
+        scrolloverview = final.callPackage ./packages/scrolloverview { };
       };
     in
     {
@@ -59,6 +60,7 @@
             naiveproxy-bin
             rime-wanxiang-gram
             rime-wanxiang-schema
+            scrolloverview
             uosc-danmaku
             ;
 

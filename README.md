@@ -10,6 +10,9 @@ Personal Nix packages shared by the NewSunH NixOS configurations.
 - `uosc-danmaku`: mpv DanDanPlay danmaku extension with uosc integration
 - `rime-wanxiang-schema`: Wanxiang Rime schema and dictionaries
 - `rime-wanxiang-gram`: Wanxiang LMDG LTS language model
+- `hyprexpo`: Hyprland workspace overview plugin (sandwichfarm fork)
+- `scrolloverview`: Hyprland scroll overview plugin (yayuuu fork; `main`
+  branch tracks release Hyprland, `new-release` tracks Hyprland git master)
 
 Blender is intentionally out of scope because it is maintained separately.
 
@@ -29,6 +32,8 @@ inputs.personal-packages.packages.x86_64-linux.uosc-danmaku
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-schema
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-gram
 inputs.personal-packages.packages.x86_64-linux.apple-emoji-ttf
+inputs.personal-packages.packages.x86_64-linux.hyprexpo
+inputs.personal-packages.packages.x86_64-linux.scrolloverview
 ```
 
 The default overlay remains available for consumers that intentionally want to
