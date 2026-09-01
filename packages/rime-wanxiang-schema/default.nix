@@ -32,6 +32,21 @@ stdenvNoCC.mkDerivation {
       mv default.yaml wanxiang_suggested_default.yaml
     fi
 
+    # Keep a mixed-version deployment usable while librime rebuilds its
+    # compiled schema.  Wanxiang 17.9 removed user_predict.lua and changed
+    # unicode_conversion.lua to expose P/T submodules.  An already running
+    # librime process can still load the previous schema for one session;
+    # provide the old entry points until that stale build is replaced.
+    if [ ! -e lua/wanxiang/user_predict.lua ]; then
+      mkdir -p lua/wanxiang
+      cp ${./legacy/user_predict.lua} lua/wanxiang/user_predict.lua
+    fi
+    if [ -f lua/wanxiang/unicode_conversion.lua ] \
+      && grep -qF 'return { P = P, T = T }' lua/wanxiang/unicode_conversion.lua; then
+      substituteInPlace lua/wanxiang/unicode_conversion.lua \
+        --replace-fail 'return { P = P, T = T }' 'return { P = P, T = T, func = T.func }'
+    fi
+
     runHook postInstall
   '';
 
