@@ -38,6 +38,7 @@
         };
         rime-wanxiang-gram = final.callPackage ./packages/rime-wanxiang-gram { };
         hyprexpo = final.callPackage ./packages/hyprexpo { };
+        latex-workshop-doq = final.callPackage ./packages/latex-workshop-doq { };
         scrolloverview = final.callPackage ./packages/scrolloverview { };
       };
     in
@@ -59,6 +60,7 @@
             ariang
             doq
             hyprexpo
+            latex-workshop-doq
             naiveproxy-bin
             rime-wanxiang-gram
             rime-wanxiang-schema
