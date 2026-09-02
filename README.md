@@ -7,6 +7,7 @@ Personal Nix packages shared by the NewSunH NixOS configurations.
 - `apple-emoji-ttf`: Apple Color Emoji Linux TTF from upstream releases
 - `naiveproxy-bin`: upstream x86_64 Linux release binary
 - `ariang`: AriaNg web interface with a desktop launcher
+- `doq`: reader mode and color schemes add-on for PDF.js
 - `uosc-danmaku`: mpv DanDanPlay danmaku extension with uosc integration
 - `rime-wanxiang-schema`: Wanxiang Rime schema and dictionaries
 - `rime-wanxiang-gram`: Wanxiang LMDG LTS language model
@@ -28,6 +29,7 @@ revision and maximize binary-cache hits:
 ```nix
 inputs.personal-packages.packages.x86_64-linux.naiveproxy-bin
 inputs.personal-packages.packages.x86_64-linux.ariang
+inputs.personal-packages.packages.x86_64-linux.doq
 inputs.personal-packages.packages.x86_64-linux.uosc-danmaku
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-schema
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-gram
@@ -68,4 +70,3 @@ The scheduled GitHub workflow checks weekly. When it finds a change, it validate
 the flake, builds and caches all packages, and opens an update pull request. A
 manual workflow run always rebuilds the package set, which can be used to refill
 the cache.
-

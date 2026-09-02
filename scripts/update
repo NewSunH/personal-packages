@@ -130,6 +130,28 @@ update_ariang() {
   write_source packages/ariang/source.json "$version" "$url" "$hash"
 }
 
+update_doq() {
+  local commit package_file rev date upstream_version version url hash
+
+  echo "Updating doq metadata..."
+  commit="$(github_get "https://api.github.com/repos/shivaprsd/doq/commits/master")"
+  rev="$(jq --raw-output --exit-status '.sha' <<<"$commit")"
+  date="$(jq --raw-output --exit-status '.commit.committer.date[0:10]' <<<"$commit")"
+  package_file="$(github_get "https://api.github.com/repos/shivaprsd/doq/contents/package.json?ref=${rev}")"
+  upstream_version="$(
+    jq --raw-output --exit-status '.content | gsub("\\n"; "") | @base64d | fromjson | .version' \
+      <<<"$package_file"
+  )"
+  version="${upstream_version}"
+  if [[ -z "$version" ]]; then
+    version="0-unstable-${date}"
+  fi
+  url="https://github.com/shivaprsd/doq/archive/${rev}.tar.gz"
+  hash="$(unpacked_hash "$url")"
+
+  write_git_source packages/doq/source.json "$version" "$rev" "$hash"
+}
+
 update_uosc_danmaku() {
   local commit rev date main_file upstream_version version url hash
 
@@ -208,6 +230,7 @@ update_all() {
   update_apple_emoji
   update_naiveproxy
   update_ariang
+  update_doq
   update_hyprexpo
   update_scrolloverview
   update_uosc_danmaku
@@ -233,6 +256,9 @@ for target in "$@"; do
     ariang)
       update_ariang
       ;;
+    doq)
+      update_doq
+      ;;
     hyprexpo)
       update_hyprexpo
       ;;
@@ -250,7 +276,7 @@ for target in "$@"; do
       ;;
     *)
       echo "unknown target: $target" >&2
-      echo "expected one of: all, apple-emoji, naiveproxy, ariang, hyprexpo, scrolloverview, uosc-danmaku, rime-gram, rime-schema" >&2
+      echo "expected one of: all, apple-emoji, naiveproxy, ariang, doq, hyprexpo, scrolloverview, uosc-danmaku, rime-gram, rime-schema" >&2
       exit 2
       ;;
   esac

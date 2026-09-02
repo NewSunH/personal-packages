@@ -29,6 +29,7 @@
 
       overlay = final: _prev: {
         apple-emoji-ttf = final.callPackage ./packages/apple-emoji-ttf { };
+        doq = final.callPackage ./packages/doq { };
         naiveproxy-bin = final.callPackage ./packages/naiveproxy-bin { };
         ariang = final.callPackage ./packages/ariang { };
         uosc-danmaku = final.callPackage ./packages/uosc-danmaku { };
@@ -56,6 +57,7 @@
           inherit (pkgs)
             apple-emoji-ttf
             ariang
+            doq
             hyprexpo
             naiveproxy-bin
             rime-wanxiang-gram
