@@ -6,6 +6,8 @@
 
 vscode-extensions.james-yu.latex-workshop.overrideAttrs (old: {
   pname = "latex-workshop-doq";
+  version = "999.0.0";
+  __intentionallyOverridingVersion = true;
 
   nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ jq ];
 
@@ -22,6 +24,10 @@ vscode-extensions.james-yu.latex-workshop.overrideAttrs (old: {
       "$doq_dir/lib/colors.json" \
       > "$doq_dir/lib/colors.json.new"
     mv "$doq_dir/lib/colors.json.new" "$doq_dir/lib/colors.json"
+
+    jq '.version = "999.0.0"' "$extension_dir/package.json" \
+      > "$extension_dir/package.json.new"
+    mv "$extension_dir/package.json.new" "$extension_dir/package.json"
 
     substituteInPlace "$doq_dir/addon/app/config.js" \
       --replace-fail 'scheme: 0, tone: "0",' 'scheme: 0, tone: "1",' \
