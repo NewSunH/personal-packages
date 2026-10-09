@@ -19,11 +19,11 @@
     "rime-wanxiang-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1791428015,
-        "narHash": "sha256-2fIf1BAegJiqgwC3KB5k+FdjZCYNC6BvDhsv4Su28qo=",
+        "lastModified": 1791513126,
+        "narHash": "sha256-F8XEr2pj82G3M0MZaJlgF6tv2ah9wqILBiKht/IufyE=",
         "owner": "amzxyz",
         "repo": "rime-wanxiang",
-        "rev": "7c7f6acfe5c887a4e2f4b60e6d06ff2d4bf66818",
+        "rev": "b183d186539ae6032dbe0164f36e969759203ef8",
         "type": "github"
       },
       "original": {
