@@ -52,6 +52,10 @@ jobs:
         if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: nix build --no-link .#apple-emoji-ttf
 
+      - name: Build ClassIn before publishing updates
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        run: nix build --no-link .#classin
+
       - uses: cachix/cachix-action@v17
         with:
           name: newsunh

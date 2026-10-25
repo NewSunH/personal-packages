@@ -130,6 +130,31 @@ update_ariang() {
   write_source packages/ariang/source.json "$version" "$url" "$hash"
 }
 
+update_classin() {
+  local config version url hash
+
+  echo "Updating ClassIn metadata..."
+  # This is the same configuration used by the official download page.
+  config="$(curl --silent --show-error --fail --location --retry 3 \
+    'https://www.eeo.cn/sysshare/custom/download_conf.json')"
+  version="$(jq --raw-output --exit-status \
+    '[.[] | select(.confName == "eeocn_linux_amd64_version") | .confValue]
+     | if length == 1 then .[0] else error("expected one ClassIn amd64 version") end
+     | select(type == "string") | select(test("^[0-9]+(\\.[0-9]+){3}$"))' <<<"$config")"
+  url="$(jq --raw-output --exit-status \
+    '[.[] | select(.confName == "eeocn_linux_amd64") | .confValue]
+     | if length == 1 then .[0] else error("expected one ClassIn amd64 URL") end
+     | select(type == "string")' <<<"$config")"
+  if [[ "$url" != "https://www.eeo.cn/download/client/classin_${version}_amd64.deb" ]]; then
+    echo "unexpected ClassIn amd64 download URL: $url" >&2
+    return 1
+  fi
+  hash="$(nix store prefetch-file --refresh --json "$url" \
+    | jq --raw-output --exit-status '.hash')"
+
+  write_source packages/classin/source.json "$version" "$url" "$hash"
+}
+
 update_doq() {
   local commit package_file rev date upstream_version version url hash
 
@@ -230,6 +255,7 @@ update_all() {
   update_apple_emoji
   update_naiveproxy
   update_ariang
+  update_classin
   update_doq
   update_hyprexpo
   update_scrolloverview
@@ -256,6 +282,9 @@ for target in "$@"; do
     ariang)
       update_ariang
       ;;
+    classin)
+      update_classin
+      ;;
     doq)
       update_doq
       ;;
@@ -276,7 +305,7 @@ for target in "$@"; do
       ;;
     *)
       echo "unknown target: $target" >&2
-      echo "expected one of: all, apple-emoji, naiveproxy, ariang, doq, hyprexpo, scrolloverview, uosc-danmaku, rime-gram, rime-schema" >&2
+      echo "expected one of: all, apple-emoji, naiveproxy, ariang, classin, doq, hyprexpo, scrolloverview, uosc-danmaku, rime-gram, rime-schema" >&2
       exit 2
       ;;
   esac

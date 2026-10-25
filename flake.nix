@@ -29,6 +29,7 @@
 
       overlay = final: _prev: {
         apple-emoji-ttf = final.callPackage ./packages/apple-emoji-ttf { };
+        classin = final.callPackage ./packages/classin { };
         doq = final.callPackage ./packages/doq { };
         naiveproxy-bin = final.callPackage ./packages/naiveproxy-bin { };
         ariang = final.callPackage ./packages/ariang { };
@@ -50,7 +51,12 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            config.allowUnfreePredicate = package: (package.pname or "") == "apple-emoji-ttf";
+            config.allowUnfreePredicate =
+              package:
+              builtins.elem (package.pname or "") [
+                "apple-emoji-ttf"
+                "classin"
+              ];
             overlays = [ overlay ];
           };
         in
@@ -58,6 +64,7 @@
           inherit (pkgs)
             apple-emoji-ttf
             ariang
+            classin
             doq
             hyprexpo
             latex-workshop-doq

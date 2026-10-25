@@ -5,6 +5,7 @@ Personal Nix packages shared by the NewSunH NixOS configurations.
 ## Packages
 
 - `apple-emoji-ttf`: Apple Color Emoji Linux TTF from upstream releases
+- `classin`: ClassIn online classroom client (official x86_64 Linux binary)
 - `naiveproxy-bin`: upstream x86_64 Linux release binary
 - `ariang`: AriaNg web interface with a desktop launcher
 - `doq`: reader mode and color schemes add-on for PDF.js
@@ -29,6 +30,7 @@ revision and maximize binary-cache hits:
 ```nix
 inputs.personal-packages.packages.x86_64-linux.naiveproxy-bin
 inputs.personal-packages.packages.x86_64-linux.ariang
+inputs.personal-packages.packages.x86_64-linux.classin
 inputs.personal-packages.packages.x86_64-linux.doq
 inputs.personal-packages.packages.x86_64-linux.uosc-danmaku
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-schema
@@ -63,10 +65,20 @@ Run every updater:
 Or update selected sources:
 
 ```console
-./scripts/update apple-emoji naiveproxy ariang uosc-danmaku rime-gram rime-schema
+./scripts/update apple-emoji naiveproxy ariang classin uosc-danmaku rime-gram rime-schema
 ```
 
-The scheduled GitHub workflow checks weekly. When it finds a change, it validates
-the flake, builds and caches all packages, and opens an update pull request. A
+The scheduled GitHub workflow checks daily at 00:00 UTC (08:00 Singapore time).
+When it finds a change, it validates the flake, builds packages, caches the
+cacheable outputs, and opens an update pull request with auto-merge enabled. A
 manual workflow run always rebuilds the package set, which can be used to refill
 the cache.
+
+ClassIn updates use the official download configuration's Linux amd64 version
+and URL. The updater downloads the package to calculate its SHA-256 hash and
+writes `packages/classin/source.json`; CI builds ClassIn before opening an update
+PR. ClassIn is built before enabling the public cache upload.
+
+For a ClassIn installation from this local checkout, pull the package updates
+and run `nix profile upgrade classin` to upgrade the installed client. The GitHub
+workflow updates package definitions; it does not upgrade local user profiles.
