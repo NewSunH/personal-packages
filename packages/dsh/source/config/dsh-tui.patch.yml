@@ -1,0 +1,169 @@
+# Local-first DSH profile. This layer is applied after the official base,
+# dsh-tui, memento, and notification bundle layers.
+
+# 2026-08-24：官方 tui bundle 同样默认禁用 skill-filesystem（与 web 一致，实测确认）。
+# 按最小集启用技能文件系统发现，让 skills/ 下的自定义技能在 TUI 会话可发现。
+- id: skill-filesystem
+  disabled: false
+
+# 本部署使用 DeepSeek API Key / 账号直连，不启用 TUI 内置订阅 OAuth（pi-ai 路由）。
+- id: dsh-tui-auth
+  disabled: true
+
+- id: llm-deepseek
+  config:
+    apiKeyEnv: 'DEEPSEEK_API_KEY'
+    baseURL: !!js process.env.DEEPSEEK_BASE_URL
+    thinking: enabled
+    reasoningEffort: high
+    models:
+      - id: deepseek-flash
+        name: DeepSeek-V41-Flash
+        contextWindow: 1000000
+        inputModalities:
+          - text
+          - image
+        imagePixelBudget: 640000
+        imageMaxBytes: 1048576
+        systemPromptUpdate: in-history
+      - id: deepseek-v4-pro
+        name: DeepSeek-V4-Pro
+        description: Stronger agentic coding, knowledge, and difficult reasoning; suited
+          to complex or quality-critical tasks at higher cost.
+        contextWindow: 1000000
+        inputModalities:
+          - text
+
+- id: sandbox-policy
+  config:
+    mode: workspace-write
+    workspaceRoot: !!js process.cwd()
+
+- id: approval
+  config:
+    policy: ask
+
+- id: permission
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+
+- id: session-telemetry-otel
+  config:
+    mode: DISABLED
+    shutdownTimeoutMillis: 3000
+    exporter:
+      url: 'https://harness-telemetry.deepseeksvc.com/v1/logs'
+      compression: gzip
+      timeoutMillis: 1000
+    processor:
+      scheduledDelayMillis: 10000
+      maxQueueSize: 2048
+      maxExportBatchSize: 2048
+      exportTimeoutMillis: 1500
+
+- id: dsh-tui
+  config:
+    provider: deepseek-account
+    model: deepseek-flash
+    fullscreen: false
+    effort: high
+    preset: standard
+    sessionId: !!js process.env.DSH_CC_RESUME_SESSION ?? undefined
+    lang: zh
+
+- id: memento
+  config:
+    enabled: true
+    writePolicy: ask
+    language: zh
+    budgets:
+      user:
+        userGlobal: 4000
+        workspace: 2500
+      agent:
+        userGlobal: 5000
+        workspace: 5000
+    maxEntriesPerQuery: 20
+    commandListLimit: 50
+    commandAuditLimit: 20
+    auditRetentionDays: 365
+    recall:
+      historyLimitDefault: 8
+      snippetCap: 5
+      snippetChars: 300
+      windowDays: 30
+    proposals:
+      enabled: true
+      maxChars: 2000
+      maxPending: 6
+
+- id: notify-on-complete
+  config:
+    enabled: true
+    title: DeepSeek Harness
+    sound: true
+    onBlocked: true
+    onQuestion: true
+    onApproval: true
+
+- insert:
+    - id: lsp
+      name: '@deepseek-ai/dsh-lsp'
+
+    - id: lsp-stdio
+      name: '@deepseek-ai/dsh-lsp-stdio'
+      config:
+        servers:
+          clangd:
+            command: clangd
+            args: [ '--background-index', '--clang-tidy' ]
+            extensionToLanguage:
+              '.c': c
+              '.h': cpp
+              '.cc': cpp
+              '.cpp': cpp
+              '.cxx': cpp
+              '.hh': cpp
+              '.hpp': cpp
+              '.hxx': cpp
+          nil:
+            command: nil
+            extensionToLanguage:
+              '.nix': nix
+          texlab:
+            command: texlab
+            extensionToLanguage:
+              '.tex': latex
+              '.bib': bibtex
+
+    - id: tool-lsp
+      name: '@deepseek-ai/dsh-tool-lsp'
+      config:
+        maxLocations: 100
+        maxResultChars: 16000
+        timeoutMs: 60000
+
+    - id: mcp-context7
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: context7
+        transport: streamable-http
+        url: 'https://mcp.context7.com/mcp'
+        toolCallTimeoutMs: 60000
+        failOnStartupError: false
+        reconnect:
+          enabled: true
+          initialDelayMs: 500
+          maxDelayMs: 30000
+          maxAttempts: 5
+- id: agent-default-model
+  config:
+    provider: deepseek-account
+    model: deepseek-flash
+    reasoningEffort: high

@@ -9,6 +9,9 @@ Personal Nix packages shared by the NewSunH NixOS configurations.
 - `naiveproxy-bin`: upstream x86_64 Linux release binary
 - `ariang`: AriaNg web interface with a desktop launcher
 - `doq`: reader mode and color schemes add-on for PDF.js
+- `dsh`: personal TUI/Web profiles and plugins on the official-source DeepSeek Harness core
+- `deepseek-harness`: official-source DSH CLI and Web, without personal plugin defaults
+- `deepseek-harness-desktop`: experimental Linux Electron desktop application
 - `uosc-danmaku`: mpv DanDanPlay danmaku extension with uosc integration
 - `rime-wanxiang-schema`: Wanxiang Rime schema and dictionaries
 - `rime-wanxiang-gram`: Wanxiang LMDG LTS language model
@@ -32,6 +35,9 @@ inputs.personal-packages.packages.x86_64-linux.naiveproxy-bin
 inputs.personal-packages.packages.x86_64-linux.ariang
 inputs.personal-packages.packages.x86_64-linux.classin
 inputs.personal-packages.packages.x86_64-linux.doq
+inputs.personal-packages.packages.x86_64-linux.dsh
+inputs.personal-packages.packages.x86_64-linux.deepseek-harness
+inputs.personal-packages.packages.x86_64-linux.deepseek-harness-desktop
 inputs.personal-packages.packages.x86_64-linux.uosc-danmaku
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-schema
 inputs.personal-packages.packages.x86_64-linux.rime-wanxiang-gram
@@ -42,6 +48,13 @@ inputs.personal-packages.packages.x86_64-linux.scrolloverview
 
 The default overlay remains available for consumers that intentionally want to
 build the packages against their own `nixpkgs` revision.
+
+See [official-source DSH packaging](packages/deepseek-harness/README.md) for the
+optional `homeManagerModules.deepseek-harness` module, linked or seeded YAML,
+declarative plugin profiles, and Linux desktop limitations. The personal
+`dsh` package wraps the same official core, adds pinned TUI/Web profiles, and exports
+`profilePlugins`/`profileBundles`. Use `homeManagerModules.dsh` for these defaults
+or `homeManagerModules.deepseek-harness` for the generic module. Install one CLI.
 
 ## Binary cache
 

@@ -19,6 +19,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       rime-wanxiang-src,
       ...
@@ -31,6 +32,9 @@
         apple-emoji-ttf = final.callPackage ./packages/apple-emoji-ttf { };
         classin = final.callPackage ./packages/classin { };
         doq = final.callPackage ./packages/doq { };
+        dsh = final.callPackage ./packages/dsh { };
+        deepseek-harness = final.callPackage ./packages/deepseek-harness/package.nix { };
+        deepseek-harness-desktop = final.callPackage ./packages/deepseek-harness/desktop.nix { };
         naiveproxy-bin = final.callPackage ./packages/naiveproxy-bin { };
         ariang = final.callPackage ./packages/ariang { };
         uosc-danmaku = final.callPackage ./packages/uosc-danmaku { };
@@ -45,6 +49,30 @@
     in
     {
       overlays.default = overlay;
+      lib.mkDshPlugin =
+        {
+          name,
+          package,
+          modulePath ? "${package}/lib/node_modules/${name}",
+        }:
+        package
+        // {
+          dshPlugin = {
+            inherit name;
+            path = modulePath;
+          };
+        };
+
+      homeManagerModules.dsh = import ./packages/dsh/home-manager.nix { inherit self; };
+      homeManagerModules.deepseek-harness = { lib, pkgs, ... }: {
+        imports = [ ./modules/home-manager/dsh.nix ];
+        programs.dsh.package =
+          lib.mkDefault
+            self.packages.${pkgs.stdenv.hostPlatform.system}.deepseek-harness;
+        programs.dsh.desktop.package =
+          lib.mkDefault
+            self.packages.${pkgs.stdenv.hostPlatform.system}.deepseek-harness-desktop;
+      };
 
       packages = forAllSystems (
         system:
@@ -56,6 +84,7 @@
               builtins.elem (package.pname or "") [
                 "apple-emoji-ttf"
                 "classin"
+                "dsh"
               ];
             overlays = [ overlay ];
           };
@@ -66,6 +95,9 @@
             ariang
             classin
             doq
+            dsh
+            deepseek-harness
+            deepseek-harness-desktop
             hyprexpo
             latex-workshop-doq
             naiveproxy-bin

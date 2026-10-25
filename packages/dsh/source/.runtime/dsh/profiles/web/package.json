@@ -1,0 +1,22 @@
+{
+  "name": "dsh-profile-web",
+  "private": true,
+  "dependencies": {
+    "dsh-better-sidebar": "0.28.0",
+    "dsh-checkpoint-rewind": "0.6.31",
+    "dsh-claude-move": "0.4.18",
+    "dsh-usage-billing": "0.9.5"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "dsh-better-sidebar",
+        "dsh-checkpoint-rewind",
+        "dsh-claude-move",
+        "dsh-usage-billing"
+      ]
+    }
+  }
+}

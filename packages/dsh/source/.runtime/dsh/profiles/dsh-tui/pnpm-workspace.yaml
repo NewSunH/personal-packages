@@ -1,0 +1,17 @@
+packages:
+  - .
+
+nodeLinker: hoisted
+autoInstallPeers: false
+minimumReleaseAgeExclude:
+  - '@deepseek-ai/dsh-workflow-ptc@0.2.1-rc.3'
+  - '@deepseek-ai/dsh-lsp@0.2.1-rc.3'
+  - '@deepseek-ai/dsh-lsp-stdio@0.2.1-rc.3'
+  - '@deepseek-ai/dsh-mcp-client@0.2.1-rc.3'
+  - '@deepseek-ai/dsh-tool-lsp@0.2.1-rc.3'
+  - '@deepseek-harness-tui/dsh-tui@0.17.0'
+  - 'dsh-memento@0.5.27'
+  - 'dsh-checkpoint-rewind@0.6.31'
+  - 'dsh-claude-move@0.4.18'
+allowBuilds:
+  node-pty: true

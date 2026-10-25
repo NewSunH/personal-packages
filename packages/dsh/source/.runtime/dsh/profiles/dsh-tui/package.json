@@ -1,0 +1,28 @@
+{
+  "name": "dsh-profile-dsh-tui",
+  "private": true,
+  "dependencies": {
+    "@deepseek-ai/dsh-lsp": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-lsp-stdio": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-mcp-client": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-tool-lsp": "0.2.1-rc.3",
+    "@deepseek-harness-tui/dsh-tui": "0.17.0",
+    "dsh-memento": "0.5.27",
+    "dsh-notify-on-complete": "link:../../../../vendor/dsh-notify-on-complete",
+    "dsh-checkpoint-rewind": "0.6.31",
+    "dsh-claude-move": "0.4.18",
+    "@deepseek-ai/dsh-workflow-ptc": "0.2.1-rc.3"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-harness-tui/dsh-tui",
+        "dsh-memento",
+        "dsh-notify-on-complete",
+        "dsh-checkpoint-rewind",
+        "dsh-claude-move"
+      ]
+    }
+  }
+}

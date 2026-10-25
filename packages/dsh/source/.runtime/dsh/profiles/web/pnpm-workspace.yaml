@@ -1,0 +1,11 @@
+packages:
+  - .
+
+nodeLinker: hoisted
+autoInstallPeers: false
+minimumReleaseAgeExclude:
+  - 'dsh-better-sidebar@0.28.0'
+  - 'dsh-checkpoint-rewind@0.6.31'
+  - 'dsh-claude-move@0.4.18'
+allowBuilds:
+  node-pty: true

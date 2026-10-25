@@ -10,12 +10,23 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v6
       - uses: DeterminateSystems/determinate-nix-action@v3
       - run: nix flake check --show-trace
+      - name: Build official-source DSH CLI and Linux desktop
+        run: nix build --no-link .#deepseek-harness .#deepseek-harness-desktop
+      - name: Check DSH configuration seeding
+        run: python3 modules/home-manager/test-seed-config.py
+      - name: Build DSH and check both profiles without credentials
+        run: |
+          nix build .#dsh
+          export DSH_HOME="$RUNNER_TEMP/dsh-check"
+          ./result/bin/dsh --dump-config > "$RUNNER_TEMP/dsh-tui.yml"
+          ./result/bin/dsh-raw --profile web --dump-config > "$RUNNER_TEMP/dsh-web.yml"
+          python3 packages/dsh/check-initialization.py ./result
       - name: Build uosc-danmaku and verify its required modules
         run: nix build --no-link .#uosc-danmaku
       - name: Build Apple Color Emoji without a public binary cache

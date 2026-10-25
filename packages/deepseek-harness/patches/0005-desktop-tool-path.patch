@@ -1,0 +1,20 @@
+--- a/apps/desktop/src/login-shell-environment.ts
++++ b/apps/desktop/src/login-shell-environment.ts
+@@ -2,6 +2,7 @@
+ 
+ import { spawn, type ChildProcessByStdio } from 'node:child_process'
+ import { homedir, userInfo } from 'node:os'
++import { delimiter } from 'node:path'
+ import type { Readable } from 'node:stream'
+ import { resolveDurationMs } from './duration-env.ts'
+ 
+@@ -99,6 +100,9 @@
+     if (SHELL_SESSION_KEYS.has(key) || LAUNCHER_OWNED_PREFIXES.some(prefix => key.startsWith(prefix))) continue
+     merged[key] = value
+   }
++  if (base.DSH_NIX_PATH_PREFIX) {
++    merged.PATH = `${base.DSH_NIX_PATH_PREFIX}${delimiter}${merged.PATH ?? ''}`
++  }
+   return merged
+ }
+ 

@@ -1,0 +1,21 @@
+--- a/packages/boot/app-boot/src/profile-resolution/resolver.ts
++++ b/packages/boot/app-boot/src/profile-resolution/resolver.ts
+@@ -732,7 +732,17 @@
+ 
+ function internalModules(): InternalModules {
+   const require = createRequire(import.meta.url)
+-  const addon = require('node-addon-require-builtin') as { requireBuiltin(moduleId: string): unknown }
++  const nativeAddon = require('node-addon-require-builtin') as { requireBuiltin(moduleId: string): unknown }
++  const addon = {
++    requireBuiltin(moduleId: string): unknown {
++      try { return nativeAddon.requireBuiltin(moduleId) } catch (error) {
++        // Use Node's explicit interface when a distribution build has an unrecognized fingerprint.
++        if (!['Unsupported/no-getter', 'Unsupported/no-context'].includes((error as NodeJS.ErrnoException).code ?? '')
++          || !process.execArgv.includes('--expose-internals')) throw error
++        return require(moduleId)
++      }
++    },
++  }
+   const esmModule = addon.requireBuiltin('internal/modules/esm/loader') as {
+     getOrInitializeCascadedLoader(): ModuleLoaderV1 | ModuleLoaderV2
+   }

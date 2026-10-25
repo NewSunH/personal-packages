@@ -65,6 +65,9 @@ jobs:
         if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           nix build --no-link \
+            .#deepseek-harness \
+            .#deepseek-harness-desktop \
+            .#dsh \
             .#naiveproxy-bin \
             .#ariang \
             .#uosc-danmaku \
