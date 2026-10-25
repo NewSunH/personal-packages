@@ -16,7 +16,7 @@ Run these commands from `personal-packages`. `path:.` includes the new package f
 ## Package boundaries
 
 - `deepseek-harness`: upstream CLI, built-in profiles and Web resources. The CLI's default selection and plugin commands remain upstream-owned. Node and pnpm are available for application-managed plugin operations.
-- `deepseek-harness-desktop`: Electron shell, private Desktop Host, runtime resources and desktop entry. PTY binaries are rebuilt against Electron headers separately from the ordinary Node runtime.
+- `deepseek-harness-desktop`: Electron shell, private Desktop Host, runtime resources and desktop entry. PTY and sharp binaries are rebuilt against Electron headers separately from the ordinary Node runtime. Desktop sharp links against Nixpkgs libvips so it shares Electron's GLib instead of loading the conflicting npm libvips payload.
 - `homeManagerModules.deepseek-harness`: optional `programs.dsh` configuration module. Do not combine it with the personal `homeManagerModules.dsh` module: both define `programs.dsh`.
 - `workspace.nix`: shared official-source compilation and type checks. `runtime.nix` deploys the production dependencies into separate CLI and desktop outputs, keeping desktop resources out of the CLI runtime reference graph. Building the CLI still compiles the upstream workspace's desktop bundles.
 
@@ -103,6 +103,8 @@ python3 modules/home-manager/test-seed-config.py
 ```
 
 `test-module.nix` exposes the evaluated Home Manager generation and assertions for linked, seeded, desktop, and external-plugin configuration. `test-module-runtime.py <generation> <dsh-executable>` checks actual plugin composition and rejection of package operations on a managed profile.
+
+The desktop checks sharp's declared libvips version requirement before compiling. Its install check runs `test-sharp.cjs` under the packaged Electron in Node mode, verifies the locally compiled addon and pinned libvips version, and checks that the process loads a single shared GLib from Nixpkgs. It repeatedly probes metadata, decodes and resizes PNG/JPEG/WebP attachments concurrently. Reading metadata is essential: the conflicting prebuilt libvips can encode images successfully but segfault when opening a conversation reads saved attachment metadata.
 
 `node test-desktop.mjs <desktop-package> <xvfb-run-executable> [window-manager-executable]` checks packaged mode, Linux identity, caption/menu IPC, the welcome window, Desktop Host, default workspace creation, and rendered workspace in an isolated home without API credentials. Run it again with `DSH_DESKTOP_TITLEBAR=native` to check the fallback. Pass Openbox as the optional window manager to also exercise maximize/minimize/restore and fullscreen transitions with renderer notifications. It retains package/menu state, text snapshots and a screenshot under `/tmp/dsh-desktop-smoke-*`. CI builds the CLI/desktop packages and checks seeding; graphical qualification is separate. Building resources alone does not establish GUI functionality.
 

@@ -12,6 +12,9 @@
   copyDesktopItems,
   autoPatchelfHook,
   xdg-user-dirs,
+  pkg-config,
+  vips,
+  glib,
 }:
 let
   workspace = callPackage ./runtime.nix { };
@@ -41,8 +44,12 @@ stdenv.mkDerivation (finalAttrs: {
     makeWrapper
     copyDesktopItems
     autoPatchelfHook
+    pkg-config
   ];
-  buildInputs = [ stdenv.cc.cc.lib ];
+  buildInputs = [
+    stdenv.cc.cc.lib
+    vips
+  ];
   installPhase = ''
     runHook preInstall
     mkdir -p "$out/lib" "$out/bin" "$out/share/icons/hicolor/512x512/apps"
@@ -89,6 +96,29 @@ stdenv.mkDerivation (finalAttrs: {
         find "$addon/build" -depth -type d -empty -delete
       fi
     done
+    # Electron exports GLib symbols. The npm libvips payload contains another
+    # GLib and crashes in sharp.metadata(); use the same shared libraries as
+    # Electron instead. Build the addon against Electron's Node headers too.
+    for modules in "$runtime/node_modules" "$app/node_modules"; do
+      if [ -d "$modules/sharp" ]; then
+        # SHARP_FORCE_GLOBAL_LIBVIPS skips sharp's own compatibility check.
+        ${nodejs_24}/bin/node - "$modules/sharp" '${vips.version}' <<'JS'
+    const root = process.argv[2];
+    const version = process.argv[3];
+    const required = require(root + '/package.json').config.libvips;
+    const semver = require(require.resolve('semver', { paths: [root] }));
+    if (!semver.satisfies(version, required)) {
+      throw new Error(`Nixpkgs libvips ''${version} does not satisfy sharp's requirement ''${required}`);
+    }
+    JS
+        (cd "$modules/sharp/src" && SHARP_FORCE_GLOBAL_LIBVIPS=1 \
+          ${nodejs_24}/bin/node ${node-gyp}/lib/node_modules/node-gyp/bin/node-gyp.js \
+          rebuild --nodedir=${electron.headers})
+        rm -rf "$modules/@img/sharp-linux-x64" "$modules/@img/sharp-libvips-linux-x64"
+        find "$modules/sharp/src/build" -type f ! -name '*.node' -delete
+        find "$modules/sharp/src/build" -depth -type d -empty -delete
+      fi
+    done
     cp "$app/resources/icon.png" "$out/share/icons/hicolor/512x512/apps/deepseek-harness.png"
     # A real application resources tree makes Electron select packaged behavior.
     # Copy the executable (a symlink would resolve resources in the shared Electron).
@@ -121,6 +151,14 @@ stdenv.mkDerivation (finalAttrs: {
     autoPatchelf "$out/lib/deepseek-harness-runtime" "$out/lib/deepseek-harness-desktop"
     patchelf --set-rpath "$(patchelf --print-rpath ${electron.unwrapped}/libexec/electron/electron)" \
       "$out/lib/electron/deepseek-harness"
+  '';
+  doInstallCheck = true;
+  installCheckPhase = ''
+    runHook preInstallCheck
+    ELECTRON_RUN_AS_NODE=1 "$out/lib/electron/deepseek-harness" \
+      ${./test-sharp.cjs} "$out/lib/deepseek-harness-runtime/node_modules/sharp" \
+      '${vips.version}' '${lib.getLib vips}' '${lib.getLib glib}'
+    runHook postInstallCheck
   '';
   desktopItems = [
     (makeDesktopItem {
