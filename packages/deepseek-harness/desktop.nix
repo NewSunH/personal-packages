@@ -52,7 +52,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
   installPhase = ''
     runHook preInstall
-    mkdir -p "$out/lib" "$out/bin" "$out/share/icons/hicolor/512x512/apps"
+    mkdir -p "$out/lib" "$out/bin" "$out/share/icons/hicolor/1024x1024/apps"
     cp -a ${workspace.desktop}/lib/. "$out/lib/"
     chmod -R u+w "$out/lib"
     app="$out/lib/deepseek-harness-desktop"
@@ -119,7 +119,13 @@ stdenv.mkDerivation (finalAttrs: {
         find "$modules/sharp/src/build" -depth -type d -empty -delete
       fi
     done
-    cp "$app/resources/icon.png" "$out/share/icons/hicolor/512x512/apps/deepseek-harness.png"
+    # Upstream's Windows artwork has the same whale and light background with
+    # rounded corners. Reuse it for Linux instead of the square default artwork.
+    cp "$app/resources/icon-windows.svg" "$app/resources/icon.svg"
+    cp "$app/resources/icon-windows.png" "$app/resources/icon.png"
+    cp "$app/resources/icon.png" "$out/share/icons/hicolor/1024x1024/apps/deepseek-harness.png"
+    install -Dm644 "$app/resources/icon.svg" \
+      "$out/share/icons/hicolor/scalable/apps/deepseek-harness.svg"
     # A real application resources tree makes Electron select packaged behavior.
     # Copy the executable (a symlink would resolve resources in the shared Electron).
     electron_dir="$out/lib/electron"

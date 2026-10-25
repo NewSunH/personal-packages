@@ -24,6 +24,8 @@ The source and dependency hashes are pinned. Normal builds install dependencies 
 
 The desktop uses a private Electron executable with an installed `resources/app` tree, so `app.isPackaged` is true. Its library/data files are shared with Nixpkgs Electron; the Nixpkgs GTK/GIO/sandbox wrapper environment is retained. The upstream integrated caption is shared between Windows and Linux, including its Application/Edit menu, native window controls and draggable strip. `process.platform` remains `linux`. Set `DSH_DESKTOP_TITLEBAR=native` (or `programs.dsh.desktop.titlebar = "native"` in Home Manager) to retain native Linux decorations and a conventional menu bar. macOS-specific behavior and Windows-only installer/tray logic remain platform-specific.
 
+The Linux application icon reuses upstream's rounded Windows artwork, preserving the dark whale and light background. Both SVG and PNG icons are installed for desktop launchers; Electron uses the same rounded PNG.
+
 ## Home Manager
 
 ```nix
