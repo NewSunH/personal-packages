@@ -1,0 +1,25 @@
+--- a/src/plugins/sevenzip.py
++++ b/src/plugins/sevenzip.py
+@@ -310,0 +311 @@
++        '-aou',
+@@ -329,0 +331 @@
++        '-aou',
+--- a/src/ui/window.py
++++ b/src/ui/window.py
+@@ -1515,0 +1516,2 @@
++        self._list_request_id = getattr(self, '_list_request_id', 0) + 1
++        request_id = self._list_request_id
+@@ -1544,0 +1547,2 @@
++            if request_id != self._list_request_id:
++                return
+@@ -1549,0 +1554,2 @@
++                if request_id != self._list_request_id:
++                    return
+@@ -1556,0 +1563,4 @@
++            def on_success(output):
++                if request_id == self._list_request_id:
++                    self._populate_file_list(output)
++
+@@ -1560 +1570 @@
+-                on_success=lambda output: self._populate_file_list(output),
++                on_success=on_success,

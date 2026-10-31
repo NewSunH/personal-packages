@@ -29,6 +29,7 @@
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
       overlay = final: _prev: {
+        akizip = final.callPackage ./packages/akizip { };
         apple-emoji-ttf = final.callPackage ./packages/apple-emoji-ttf { };
         classin = final.callPackage ./packages/classin { };
         doq = final.callPackage ./packages/doq { };
@@ -82,15 +83,18 @@
             config.allowUnfreePredicate =
               package:
               builtins.elem (package.pname or "") [
+                "7zz"
                 "apple-emoji-ttf"
                 "classin"
                 "dsh"
+                "uasm"
               ];
             overlays = [ overlay ];
           };
         in
         {
           inherit (pkgs)
+            akizip
             apple-emoji-ttf
             ariang
             classin
